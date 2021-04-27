@@ -2,21 +2,32 @@
 
 //array for img
 let imgArray = [
-  'bag',
-  'banana',
-  'bathroom',
-  'boots',
-  'breakfast',
-  'bubblegum',
-  'chair',
-  'cthulhu',
-  'dog-duck',
-  'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'usb', 'water-can', 'wine-glass'];
+  'bag.jpg',
+  'banana.jpg',
+  'bathroom.jpg',
+  'boots.jpg',
+  'breakfast.jpg',
+  'bubblegum.jpg',
+  'chair.jpg',
+  'cthulhu.jpg',
+  'dog-duck.jpg',
+  'dragon.jpg',
+  'pen.jpg',
+  'pet-sweep.jpg',
+  'scissors.jpg',
+  'shark.jpg',
+  'sweep.png',
+  'tauntaun.jpg',
+  'unicorn.jpg',
+  'usb.gif',
+  'water-can.jpg',
+  'wine-glass.jpg'];
 
 let clicksNumber = 0;
 let leftImgClicks = 0;
 let rightImgClicks = 0;
 let medImgClicks = 0;
+let voteClicks = 25;
 
 
 // random function
@@ -29,13 +40,13 @@ function random(min, max) {
 //constructor object for img product
 function BusMall(nameOfProduct) {
 
-  this.nameOfProduct = nameOfProduct;
-  this.pathImg = `./img/${nameOfProduct}.split`;
+  this.nameOfProduct = nameOfProduct.split('.')[0];
+  this.img = `./img/${nameOfProduct}`;
   this.shownImg = 0;
   this.timesOfClicks = 0;
 
   BusMall.all.push(this);
-  console.log(this.pathImg);
+  console.log(this.img.length);
 }
 
 BusMall.all = [];
@@ -49,25 +60,21 @@ for (let i = 0; i < imgArray.length; i++) {
 //get element by id
 const imgSection = document.getElementById('imgID');
 const leftImg = document.getElementById('leftImg');
-const medImg = document.getElementById('medImg');
+const medImg = document.getElementById('midImg');
 const rightImg = document.getElementById('rightImg');
-const ulElement = document.getElementById('ul');
-const buttonElement = document.getElementById('button');
+//const buttonElement = document.getElementById('button');
 
 
 //render images
-function render() {
+function renderimg() {
   let leftNumber = random(0, imgArray.length - 1);
-  let rightNumber;
   let medNumber;
+  let rightNumber;
 
   do {
-    rightNumber = random(0, imgArray.length);
-  } while (rightNumber === leftNumber);
-
-  do {
-    medNumber = random(0, imgArray.length);
-  } while (medNumber === rightNumber);
+    medNumber = random(0, imgArray.length - 1);
+    rightNumber = random(0, imgArray.length - 1);
+  } while (rightNumber === leftNumber || medNumber === rightNumber || medNumber === leftNumber);
 
   leftImg.src = BusMall.all[leftNumber].img;
   rightImg.src = BusMall.all[rightNumber].img;
@@ -82,18 +89,10 @@ function render() {
   BusMall.all[medNumber].shownImg++;
 }
 
-//render result
-function renderResult() {
-  for (let x = 0; x < imgArray.length; x++) {
-    let liElement = document.createElement('li');
-    ulElement.appendChild(liElement);
-    liElement.textContent = `${imgArray[x]}:${clicksNumber}`;
-  }
-}
 
 // events
 function busMallEvent(event) {
-  if ((event.target.id === 'leftImg' || event.target.id === 'rightImg' || event.target.id === 'medImg') && clicksNumber < 25) {
+  if ((event.target.id === 'leftImg' || event.target.id === 'rightImg' || event.target.id === 'medImg') && clicksNumber < voteClicks) {
 
     if (event.target.id === 'leftImg') {
       BusMall.all[leftImgClicks].timesOfClicks++;
@@ -108,15 +107,60 @@ function busMallEvent(event) {
     }
 
     clicksNumber++;
-    render();
+    renderimg();
 
   } else {
-    console.log(BusMall.all);
+    renderChart();
   }
 }
 
 imgSection.addEventListener('click', busMallEvent);
-render();
+renderimg();
 
-buttonElement.addEventListener('click');
-renderResult();
+
+function renderChart() {
+
+  let clicks = [];
+  let names = [];
+  let shown = [];
+  for( let i = 0; i < BusMall.all.length; i++ ) {
+    clicks.push( BusMall.all[i].clicks );
+    names.push( BusMall.all[i].name );
+    shown.push( BusMall.all[i].shown );
+
+  }
+
+  let ctx = document.getElementById( 'theChart' ).getContext( '2d' );
+  let theChart = new Chart( ctx, {
+    type: 'bar',
+    data: {
+      labels: names,
+      datasets: [{
+        label: 'Votes',
+        data: clicks,
+        backgroundColor:
+          'rgba(255, 99, 132, 0.2)',
+        borderColor:
+          'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      }, {
+        label: 'shown',
+        data: shown,
+        backgroundColor:
+          'rgba(300, 200, 100, 0.2)',
+        borderColor:
+          'rgba(300, 200, 100, 1)',
+        borderWidth: 1,
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  } );
+
+}
+

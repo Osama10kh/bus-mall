@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,9 +8,10 @@
     <title>bus-mall</title>
     <link rel="stylesheet" href="./CSS/style.css">
 </head>
+
 <body>
     <header>
-        <img class="logo" src="./img/download.png" alt="">
+        <img class="logo" src="" alt="">
         <h1>BusMall</h1>
     </header>
     <main>
@@ -18,15 +20,20 @@
             <img src="" alt="" id="midImg">
             <img src="" alt="" id="rightImg">
         </section>
+        <section>
+            <canvas id="theChart" width="400" height="400"></canvas>
+          </section>
         <aside id="resultId">
             <ul id="ul">
-                
+
             </ul>
-        <button id="button" type="button">View Results</button>    
+            <button id="button" type="button">View Results</button>
 
         </aside>
     </main>
     <footer></footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
     <script src="./JS/app.js"></script>
 </body>
+
 </html>
