@@ -23,6 +23,9 @@ let imgArray = [
   'water-can.jpg',
   'wine-glass.jpg'];
 
+let clicksArr = [];
+let shownArr = [];
+
 let clicksNumber = 0;
 let leftImgClicks = 0;
 let rightImgClicks = 0;
@@ -58,11 +61,12 @@ for (let i = 0; i < imgArray.length; i++) {
 }
 
 //get element by id
-const imgSection = document.getElementById('imgID');
+const imgID = document.getElementById('imgID');
 const leftImg = document.getElementById('leftImg');
 const medImg = document.getElementById('midImg');
 const rightImg = document.getElementById('rightImg');
-//const buttonElement = document.getElementById('button');
+const button = document.getElementById('button');
+const ul = document.getElementById('ul');
 
 
 //render images
@@ -87,6 +91,13 @@ function renderimg() {
   BusMall.all[leftNumber].shownImg++;
   BusMall.all[rightNumber].shownImg++;
   BusMall.all[medNumber].shownImg++;
+
+  for (let i = 0; i < imgArray.length; i++) {
+    shownArr[i] = BusMall.all.shownImg;
+
+  }
+
+
 }
 
 
@@ -109,35 +120,34 @@ function busMallEvent(event) {
     clicksNumber++;
     renderimg();
 
+    for (let i = 0; i < imgArray.length; i++) {
+      clicksArr[i] = BusMall.all.timesOfClicks;
+
+    }
+
+
+
   } else {
     renderChart();
   }
 }
 
-imgSection.addEventListener('click', busMallEvent);
+imgID.addEventListener('click', busMallEvent);
 renderimg();
+
 
 
 function renderChart() {
 
-  let clicks = [];
-  let names = [];
-  let shown = [];
-  for( let i = 0; i < BusMall.all.length; i++ ) {
-    clicks.push( BusMall.all[i].clicks );
-    names.push( BusMall.all[i].name );
-    shown.push( BusMall.all[i].shown );
 
-  }
-
-  let ctx = document.getElementById( 'theChart' ).getContext( '2d' );
-  let theChart = new Chart( ctx, {
+  let ctx = document.getElementById('myChart').getContext('2d');
+  let myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: names,
+      labels: imgArray,
       datasets: [{
         label: 'Votes',
-        data: clicks,
+        data: clicksArr,
         backgroundColor:
           'rgba(255, 99, 132, 0.2)',
         borderColor:
@@ -145,7 +155,7 @@ function renderChart() {
         borderWidth: 1,
       }, {
         label: 'shown',
-        data: shown,
+        data: shownArr,
         backgroundColor:
           'rgba(300, 200, 100, 0.2)',
         borderColor:
@@ -160,7 +170,29 @@ function renderChart() {
         }
       }
     }
-  } );
-
+  });
 }
 
+localStorage.setItem('items', JSON.stringify(BusMall.all));
+
+function renderData() {
+  ul.innerHTML = '';
+  for (let i = 0; i < BusMall.all.length; i++) {
+    let li = document.createElement('li');
+    ul.appendChild(li);
+
+    li.textContent = BusMall.all[i];
+  }
+}
+
+function getData() {
+  let data = JSON.parse(localStorage.getItem('ul'));
+  if (data) {
+    for (let i = 0; i < data.length; i++) {
+      new BusMall(data[i].nameOfProduct, data[i].clicksArr, data[i].shownArr);
+    }
+    renderData();
+  }
+}
+
+getData();
